@@ -109,27 +109,30 @@ __global__ void convolution2DAdvanced(const float *__restrict__ input, float *__
         write_buffer = 1 - write_buffer;
     }
 }
-int main() {
+int main()
+{
     // 1. Define image dimensions
     const int width = 2048;
     const int height = 2048;
-    
+
     size_t image_size = width * height * sizeof(float);
     size_t filter_size = FILTER_WIDTH * FILTER_WIDTH * sizeof(float);
 
     // 2. Allocate CPU (Host) memory
-    float* h_input = (float*)malloc(image_size);
-    float* h_output = (float*)malloc(image_size);
-    float* h_filter = (float*)malloc(filter_size);
+    float *h_input = (float *)malloc(image_size);
+    float *h_output = (float *)malloc(image_size);
+    float *h_filter = (float *)malloc(filter_size);
 
     // 3. Initialize synthetic data
     // Fill input with 1.0f (makes verification easy)
-    for (int i = 0; i < width * height; ++i) {
-        h_input[i] = 1.0f; 
+    for (int i = 0; i < width * height; ++i)
+    {
+        h_input[i] = 1.0f;
     }
-    
+
     // Fill filter weights with 1.0f / 25.0f (a standard box blur filter)
-    for (int i = 0; i < FILTER_WIDTH * FILTER_WIDTH; ++i) {
+    for (int i = 0; i < FILTER_WIDTH * FILTER_WIDTH; ++i)
+    {
         h_filter[i] = 1.0f / (FILTER_WIDTH * FILTER_WIDTH);
     }
 
@@ -148,7 +151,7 @@ int main() {
     // The kernel calculates two vertical tiles per block (start_tile_y to end_tile_y)
     dim3 threadsPerBlock(TILE_WIDTH, TILE_WIDTH);
     dim3 numBlocks(
-        (width + TILE_WIDTH - 1) / TILE_WIDTH, 
+        (width + TILE_WIDTH - 1) / TILE_WIDTH,
         ((height + TILE_WIDTH - 1) / TILE_WIDTH + 1) / 2 // Divided by 2 because each block handles 2 vertical tiles
     );
 
